@@ -2,11 +2,13 @@ import OpenAI from 'openai';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: import.meta.env.OPENAI_API_KEY,
+    dangerouslyAllowBrowser: true
 });
 
 // TypeScript interfaces
-export interface AIListing {
+export interface Listing {
+    id: string;
     title: string;
     location: string;
     description: string;
@@ -14,6 +16,7 @@ export interface AIListing {
     keyFeatures: string[];
     pricePerNight: number;
     idealFor: string;
+    rating: number;
 }
 
 const LISTING_PROMPT = `You are a creative travel destination generator specializing in imaginative, AI-generated locations. Generate a rental listing with the following characteristics:
@@ -33,7 +36,7 @@ Please generate a listing using the following JSON format:
 
 Ensure the response is valid JSON and includes all fields. Balance innovation with homey comfort and avoid dystopian elements or unrealistic features.`;
 
-export async function generateListing(): Promise<AIListing> {
+export async function generateListing(): Promise<Listing> {
     try {
         // Construct the prompt with any specific requirements
         const prompt = LISTING_PROMPT;
@@ -62,10 +65,10 @@ export async function generateListing(): Promise<AIListing> {
             throw new Error('No response from OpenAI');
         }
 
-        const listing = JSON.parse(response) as AIListing;
+        const listing = JSON.parse(response) as Listing;
 
         // Validate the response has all required fields
-        const requiredFields: (keyof AIListing)[] = [
+        const requiredFields: (keyof Listing)[] = [
             'title',
             'location',
             'description',
