@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Search, MapPin, Star, Filter, Plus, Loader2 } from 'lucide-react';
 
-import { Listing, generateListing } from './generateListing';
+import { Listing } from '@shared/types';
 
 const ListingCard = ({ listing, isLoading = false }: { listing: Listing, isLoading?: boolean }) => (
   <div className={`rounded-xl overflow-hidden shadow-lg transition-all ${isLoading ? 'opacity-60 animate-pulse' : 'hover:scale-105'}`}>
     <img
-      src="https://placehold.co/400x300"
+      src={listing.imageUrl}
       alt={listing.title}
       className="w-full h-48 object-cover"
     />
@@ -81,6 +81,7 @@ const AIRentalMarketplace = () => {
       id: crypto.randomUUID(),
       title: "Cyberpunk Skyline Loft",
       location: "Neo Tokyo District",
+      imageUrl: "https://placehold.co/400x300",
       description: "Experience the future in this AI-designed loft with panoramic holographic views",
       propertyType: "Loft",
       keyFeatures: ["Holographic Views", "AI Butler", "Smart Home"],
@@ -92,6 +93,7 @@ const AIRentalMarketplace = () => {
       id: crypto.randomUUID(),
       title: "Quantum Garden Retreat",
       location: "Digital Wilderness",
+      imageUrl: "https://placehold.co/400x300",
       description: "A peaceful sanctuary where nature meets quantum computing",
       propertyType: "Villa",
       keyFeatures: ["Quantum Garden", "Neural Spa", "Bio-feedback Room"],
@@ -113,6 +115,7 @@ const AIRentalMarketplace = () => {
       location: "",
       description: "",
       propertyType: "",
+      imageUrl: "",
       keyFeatures: [],
       pricePerNight: 0,
       idealFor: "",
@@ -135,13 +138,14 @@ const AIRentalMarketplace = () => {
           location: "Silicon Valley 2.0",
           description: "Live inside a visualization of a neural network with adaptive environments",
           propertyType: "Smart Home",
+          imageUrl: "https://placehold.co/400x300",
           keyFeatures: ["Adaptive AI", "Neural Interface", "Quantum Security"],
           pricePerNight: 399,
           idealFor: "AI researchers",
           rating: 4.8
         };
       } else {
-        newListing = await generateListing();
+        //newListing = await generateListing();
       }
 
       // Replace the loading listing with the new one

@@ -16,12 +16,12 @@ const server = serve({
             return new Response(null, { headers: corsHeaders });
         }
 
-        if (url.pathname === "/api/test") {
+        if (url.pathname === "/api/listings") {
             let responseBody;
             if (req.method === "GET") {
-                responseBody = "This is a GET request to /api/test";
+                responseBody = "This is a GET request to /api/listings";
             } else if (req.method === "POST") {
-                responseBody = "This is a POST request to /api/test";
+                responseBody = "This is a POST request to /api/listings";
             } else {
                 return new Response("Method not allowed", { status: 405, headers: corsHeaders });
             }
