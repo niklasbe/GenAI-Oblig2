@@ -85,7 +85,7 @@ const AIRentalMarketplace = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">AIrbnb</h1>
+        <h1 className="text-3xl font-bold mb-4"><b>AI</b>rbnb</h1>
         <p className="text-gray-600">Discover AI-generated destinations beyond imagination</p>
       </header>
 
