@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'preact/hooks';
-import { Search, MapPin, Star, Filter, Plus, Loader2 } from 'lucide-react';
+import { Search, MapPin, Star, Plus, Loader2 } from 'lucide-react';
 import { Listing } from "@shared/types";
 
 
@@ -49,21 +49,27 @@ const ListingCard = ({ listing, isLoading = false }: { listing: Listing, isLoadi
 	);
 }
 
-const SearchBar = () => (
-	<div className="flex items-center space-x-4 mb-8">
-		<div className="flex-1 relative">
-			<input
-				type="text"
-				placeholder="Search AI-generated destinations..."
-				className="w-full p-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-			/>
-			<Search className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+const SearchBar = ({ searchQuery, setSearchQuery }: { searchQuery: string, setSearchQuery: (query: string) => void }) => {
+
+	return (
+		<div className="flex items-center space-x-4 mb-8">
+			<div className="flex-1 relative">
+				<input
+					type="text"
+					value={searchQuery}
+					onInput={(e) => setSearchQuery(e.currentTarget.value)}
+					placeholder="Search AI-generated destinations..."
+					className="w-full p-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+				/>
+				<Search className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+			</div>
+			{/*<button className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200">
+				<Filter className="w-5 h-5" />
+			</button>
+			*/}
 		</div>
-		<button className="p-3 rounded-lg bg-gray-100 hover:bg-gray-200">
-			<Filter className="w-5 h-5" />
-		</button>
-	</div>
-);
+	)
+}
 
 const GenerateButton = ({ onClick, isGenerating }: { onClick: () => void, isGenerating: boolean }) => (
 	<button
@@ -83,6 +89,8 @@ const GenerateButton = ({ onClick, isGenerating }: { onClick: () => void, isGene
 const AIRentalMarketplace = () => {
 	const [listings, setListings] = useState<Listing[]>([]);
 	const [isGenerating, setIsGenerating] = useState(false);
+	const [searchQuery, setSearchQuery] = useState('');
+
 
 	useEffect(() => {
 		fetch('http://localhost:3000/api/listings')
@@ -136,6 +144,12 @@ const AIRentalMarketplace = () => {
 		}
 	};
 
+	// Filter and sort listings based on search query
+	const filteredListings = listings.filter(listing =>
+		listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+		listing.location.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<div className="max-w-6xl mx-auto px-4 py-8">
 			<header className="mb-8">
@@ -143,10 +157,10 @@ const AIRentalMarketplace = () => {
 				<p className="text-gray-600">Discover AI-generated destinations beyond imagination</p>
 			</header>
 
-			<SearchBar />
+			<SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{listings.map(listing => (
+				{filteredListings.map(listing => (
 					<ListingCard
 						key={listing.id}
 						listing={listing}
