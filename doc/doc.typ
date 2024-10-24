@@ -115,6 +115,8 @@ The server was set up to handle requests for listing data and content generation
 === Static asset server
 The server uses Bun's built-in static file serving to serve AI-generated images from the `project/backend/img` directory through the `/img/` route. Caching is enabled to reduce server load.
 
+After generating a new listing, the server saves the image to the `project/backend/img` directory. This approach ensures that the frontend can display the generated images without additional API calls.
+
 === API Endpoints
 ```
   /api/
