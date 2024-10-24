@@ -4,46 +4,50 @@ import { Listing } from "@shared/types";
 
 
 
-const ListingCard = ({ listing, isLoading = false }: { listing: Listing, isLoading?: boolean }) => (
-	<div className={`rounded-xl overflow-hidden shadow-lg transition-all ${isLoading ? 'opacity-60 animate-pulse' : 'hover:scale-105'}`}>
-		<img
-			src={listing.imageUrl}
-			alt={listing.title}
-			className="w-full h-48 object-cover"
-		/>
-		<div className="p-4">
-			<div className="flex justify-between items-start">
-				<h3 className="font-semibold text-lg">
-					{isLoading ? 'Generating...' : listing.title}
-				</h3>
-				<div className="flex items-center">
-					<Star className="w-4 h-4" />
-					<span className="ml-1">{listing.rating || 'New'}</span>
+const ListingCard = ({ listing, isLoading = false }: { listing: Listing, isLoading?: boolean }) => {
+	const imageUrl = `http://localhost:3000/img/${listing.id}.png`;
+
+	return (
+		<div className={`rounded-xl overflow-hidden shadow-lg transition-all ${isLoading ? 'opacity-60 animate-pulse' : 'hover:scale-105'}`}>
+			<img
+				src={isLoading ? "https://placehold.co/400x300" : imageUrl}
+				alt={listing.title}
+				className="w-full h-48 object-cover"
+			/>
+			<div className="p-4">
+				<div className="flex justify-between items-start">
+					<h3 className="font-semibold text-lg">
+						{isLoading ? 'Generating...' : listing.title}
+					</h3>
+					<div className="flex items-center">
+						<Star className="w-4 h-4" />
+						<span className="ml-1">{listing.rating || 'New'}</span>
+					</div>
 				</div>
-			</div>
-			<div className="flex items-center text-gray-600 mt-1">
-				<MapPin className="w-4 h-4 mr-1" />
-				<span>{isLoading ? 'Finding location...' : listing.location}</span>
-			</div>
-			<p className="text-gray-600 mt-2">
-				{isLoading ? 'Creating an amazing AI-generated destination just for you...' : listing.description}
-			</p>
-			<div className="mt-4">
-				<span className="font-bold">${listing.pricePerNight}</span>
-				<span className="text-gray-600"> / night</span>
-			</div>
-			{!isLoading && listing.keyFeatures && (
-				<div className="mt-3 flex flex-wrap gap-2">
-					{listing.keyFeatures.map((feature, index) => (
-						<span key={index} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-							{feature}
-						</span>
-					))}
+				<div className="flex items-center text-gray-600 mt-1">
+					<MapPin className="w-4 h-4 mr-1" />
+					<span>{isLoading ? 'Finding location...' : listing.location}</span>
 				</div>
-			)}
+				<p className="text-gray-600 mt-2">
+					{isLoading ? 'Creating an amazing AI-generated destination just for you...' : listing.description}
+				</p>
+				<div className="mt-4">
+					<span className="font-bold">${listing.pricePerNight}</span>
+					<span className="text-gray-600"> / night</span>
+				</div>
+				{!isLoading && listing.keyFeatures && (
+					<div className="mt-3 flex flex-wrap gap-2">
+						{listing.keyFeatures.map((feature, index) => (
+							<span key={index} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+								{feature}
+							</span>
+						))}
+					</div>
+				)}
+			</div>
 		</div>
-	</div>
-);
+	);
+}
 
 const SearchBar = () => (
 	<div className="flex items-center space-x-4 mb-8">
@@ -98,7 +102,6 @@ const AIRentalMarketplace = () => {
 			id: "",
 			title: "",
 			location: "",
-			imageUrl: "",
 			description: "",
 			propertyType: "",
 			keyFeatures: [],
@@ -110,21 +113,16 @@ const AIRentalMarketplace = () => {
 		setListings(prev => [loadingListing, ...prev]);
 
 		try {
-			// Simulate API call - replace with actual API call
-			await new Promise(resolve => setTimeout(resolve, 3000));
 
-			const newListing: Listing = {
-				id: crypto.randomUUID(),
-				title: "Neural Network Nexus",
-				location: "Silicon Valley 2.0",
-				imageUrl: "https://placehold.co/400x300",
-				description: "Live inside a visualization of a neural network with adaptive environments",
-				propertyType: "Smart Home",
-				keyFeatures: ["Adaptive AI", "Neural Interface", "Quantum Security"],
-				pricePerNight: 399,
-				idealFor: "AI researchers",
-				rating: 4.8
-			};
+			const response = await fetch('http://localhost:3000/api/listings', {
+				method: 'POST'
+			});
+
+			if (!response.ok) {
+				throw new Error("Error fetching generated listing: " + response);
+			}
+
+			const newListing: Listing = await response.json();
 
 			// Replace the loading listing with the new one
 			setListings(prev => [newListing, ...prev.slice(1)]);

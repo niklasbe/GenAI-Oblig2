@@ -5,7 +5,6 @@ export interface Listing {
     location: string;
     description: string;
     propertyType: string;
-    imageUrl: string;
     keyFeatures: string[];
     pricePerNight: number;
     idealFor: string;
