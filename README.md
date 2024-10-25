@@ -5,7 +5,7 @@
 # Installation
 ## Backend
 ```md
-cd backend/
+cd project/backend/
 bun install
 # Run the server
 bun src/index.ts
@@ -13,7 +13,7 @@ bun src/index.ts
 The server will be available at `http://localhost:3000`.
 ## Frontend
 ```md
-cd frontend/
+cd project/frontend/
 bun install
 # Run the frontend server (development mode)
 bun dev
