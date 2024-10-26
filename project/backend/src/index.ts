@@ -6,15 +6,19 @@ import { generateListing } from "./generateListing";
 import { generateImage } from "./generateImage";
 
 
+// Initialize SQLite database
 const db = new Database("database.db");
 
+// CORS headers for cross-origin requests
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
 };
 
+// Retrieve all listings from database
 const getAllListings = async () => {
+
     const query = db.query("SELECT * FROM listings");
     // Map the listings from the database to the Listing type
     const listings: Listing[] = query.all().map((row: any) => ({
@@ -24,6 +28,7 @@ const getAllListings = async () => {
     return listings;
 };
 
+// Create a HTTP server to handle requests
 const server = serve({
     port: 3000,
     idleTimeout: 30,
@@ -38,18 +43,23 @@ const server = serve({
         if (url.pathname === "/api/listings") {
 
             if (req.method === "GET") {
+
+                // Return all listings
                 const listings = JSON.stringify(await getAllListings());
                 return new Response(listings, {
                     status: 200,
                     headers: { ...corsHeaders, "Content-Type": "application/json" }
                 });
             } else if (req.method === "POST") {
+
+                // Generate new listing and save to database
                 const listing: Listing = await generateListing();
-                // Insert the new listing into the database
                 const query = db.prepare(
                     `INSERT INTO listings (id, title, location, description, propertyType, keyFeatures, pricePerNight, idealFor,rating) 
                     VALUES ($id, $title, $location, $description, $propertyType, $keyFeatures, $pricePerNight, $idealFor, $rating)`
                 );
+
+                // Execute insert query with listing data
                 const run = query.run({
                     $id: listing.id,
                     $title: listing.title,
@@ -61,12 +71,13 @@ const server = serve({
                     $idealFor: listing.idealFor,
                     $rating: listing.rating,
                 });
+
                 // Verify if the listing was inserted
                 if (run.changes !== 1) {
                     return new Response("Error inserting listing", { status: 500, headers: corsHeaders });
                 }
 
-                console.log(listing);
+                // Generate and save image for the listing
                 await generateImage(listing);
 
                 // Return the new listing
@@ -80,19 +91,20 @@ const server = serve({
             }
         }
 
+        // Serve static images
         else if (url.pathname.startsWith("/img/")) {
-            const file = Bun.file(url.pathname.slice(1));
 
+            const file = Bun.file(url.pathname.slice(1));
             const fileExists = await file.exists();
 
             if (!fileExists) {
                 console.log("Not found, returning 404");
                 return new Response("Not found", { status: 404, headers: corsHeaders });
             }
-            // const file = Bun.file(url.pathname);
             return new Response(file, { headers: { ...corsHeaders, "Content-Type": "image/png", "Cache-Control": "public, max-age=604800" } });
         }
         else {
+            // Return 404 for all other routes
             return new Response("Not found", { status: 404, headers: corsHeaders });
         }
     },
