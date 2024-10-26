@@ -41,16 +41,21 @@ const server = serve({
         }
 
         if (url.pathname === "/api/listings") {
-
+            // Route for getting all listings
             if (req.method === "GET") {
-
                 // Return all listings
                 const listings = JSON.stringify(await getAllListings());
                 return new Response(listings, {
                     status: 200,
                     headers: { ...corsHeaders, "Content-Type": "application/json" }
                 });
-            } else if (req.method === "POST") {
+            } else {
+                return new Response("Method not allowed", { status: 405, headers: corsHeaders });
+            }
+        } else if (url.pathname === "/api/listings/generate") {
+            // Route for generating new listing
+
+            if (req.method === "POST") {
 
                 // Generate new listing and save to database
                 const listing: Listing = await generateListing();

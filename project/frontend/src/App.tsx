@@ -122,7 +122,7 @@ const AIRentalMarketplace = () => {
 
 		try {
 
-			const response = await fetch('http://localhost:3000/api/listings', {
+			const response = await fetch('http://localhost:3000/api/listings/generate', {
 				method: 'POST'
 			});
 
