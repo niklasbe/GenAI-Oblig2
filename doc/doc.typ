@@ -189,7 +189,7 @@ By default, the OpenAI library looks for an environment variable named `OPENAI_A
 == Installation
 ```md
 # Install backend packages
-cd backend/
+cd project/backend/
 bun install
 # Run the backend server
 bun src/index.ts
@@ -197,7 +197,7 @@ bun src/index.ts
 The server will be available at `http://localhost:3000`.
 ```md
 # Install frontend packages
-cd frontend/
+cd project/frontend/
 bun install
 # Run the frontend server (development mode)
 bun dev
